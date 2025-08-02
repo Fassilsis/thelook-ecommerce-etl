@@ -2,65 +2,76 @@ config {
     type: "table",
     description: "Denormalized sales table at order item grain combining orders, order items, products, inventory, users, and distribution centers"
 }
-
+WITH base AS (
+  SELECT
+    oi.order_item_id,
+    oi.order_id,
+    oi.user_id,
+    u.first_name,
+    u.last_name,
+    u.email,
+    u.age,
+    u.gender,
+    u.state,
+    u.city,
+    u.country,
+    oi.order_created_at,
+    oi.order_shipped_at,
+    oi.order_delivered_at,
+    oi.order_returned_at,
+    o.num_of_item,
+    oi.is_delivered,
+    oi.is_returned,
+    oi.is_in_transit,
+    oi.order_year,
+    oi.order_month,
+    oi.order_date,
+    oi.order_day_of_week,
+    oi.product_id,
+    oi.inventory_item_id,
+    oi.status AS order_status,
+    oi.sale_price,
+    pi.product_name,
+    pi.product_category,
+    pi.product_brand,
+    pi.product_department,
+    pi.retail_price,
+    pi.item_cost,
+    pi.product_sku,
+    pi.product_distribution_center_id,
+    dc.distribution_center_name,
+    dc.latitude AS distribution_center_latitude,
+    dc.longitude AS distribution_center_longitude
+  FROM
+    ${ref("stg_order_items")} oi
+  LEFT JOIN
+    ${ref("stg_orders")} o
+  ON
+    oi.order_id = o.order_id
+  LEFT JOIN
+    ${ref("stg_users")} u
+  ON
+    oi.user_id = u.user_id
+  LEFT JOIN
+    ${ref("stg_product_inventory")} pi
+  ON
+    oi.product_id = pi.product_id
+    AND oi.inventory_item_id = pi.inventory_item_id
+  LEFT JOIN
+    ${ref("stg_distribution_centers")} dc
+  ON
+    pi.product_distribution_center_id = dc.distribution_center_id
+)
 SELECT
-  oi.order_item_id,
-  oi.order_id,
-  oi.user_id,
-  u.first_name,
-  u.last_name,
-  u.email,
-  u.age,
-  u.gender,
-  u.state,
-  u.city,
-  u.country,
-  u.traffic_source,
-  o.order_status,
-  o.order_created_at,
-  o.order_shipped_at,
-  o.order_delivered_at,
-  o.order_returned_at,
-  o.num_of_item,
-  o.is_delivered,
-  o.is_returned,
-  o.is_in_transit,
-  o.order_year,
-  o.order_month,
-  o.order_day,
-  o.order_day_of_week,
-  oi.product_id,
-  oi.inventory_item_id,
-  oi.order_item_status,
-  oi.sale_price,
-  pi.product_name,
-  pi.product_category,
-  pi.product_brand,
-  pi.product_department,
-  pi.product_retail_price,
-  pi.cost AS inventory_cost,
-  pi.product_sku,
-  pi.product_distribution_center_id,
-  pi.profit_margin,
-  dc.distribution_center_name,
-  dc.distribution_center_latitude,
-  dc.distribution_center_longitude
-FROM
-  ${ref("stg_order_items")} oi
-LEFT JOIN
-  ${ref("stg_orders")} o
-ON
-  oi.order_id = o.order_id
-LEFT JOIN
-  ${ref("stg_users")} u
-ON
-  oi.user_id = u.user_id
-LEFT JOIN
-  ${ref("stg_product_inventory")} pi
-ON
-  oi.product_id = pi.product_id
-  AND oi.inventory_item_id = pi.inventory_item_id
-LEFT JOIN
-  ${ref("stg_distribution_centers")} dc
-ON
-  pi.product_distribution_center_id = dc.distribution_center_id
+  b.*,
+  retail_price - sale_price AS discount_amount,
+  CASE 
+  WHEN retail_price IS NOT NULL AND retail_price != 0 THEN
+    ROUND((retail_price - sale_price) / retail_price, 2)
+  ELSE NULL
+  END AS discount_rate,
+  retail_price AS revenue_before_discount,
+  sale_price AS revenue_after_discount,
+  sale_price - item_cost AS profit_amount
+ FROM base AS b
+
