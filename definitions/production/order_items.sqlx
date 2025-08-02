@@ -11,7 +11,7 @@ SELECT
   u.last_name,
   u.email,
   u.age,
-  oi.gender,
+  u.gender,
   u.state,
   u.city,
   u.country,

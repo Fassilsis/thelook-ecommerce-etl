@@ -9,6 +9,11 @@ SELECT
   last_name,
   email,
   age,
+  CASE
+    WHEN LOWER(gender) = 'f' THEN 'Female'
+    ELSE 'Male'
+  END
+    AS gender,
   state,
   street_address,
   postal_code,
