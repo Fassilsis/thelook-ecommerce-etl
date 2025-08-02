@@ -1,0 +1,23 @@
+config {
+    type: "view",
+    description: "User demographics and location"
+}
+
+SELECT
+  id AS user_id,
+  first_name,
+  last_name,
+  email,
+  age,
+  state,
+  street_address,
+  postal_code,
+  city,
+  country,
+  latitude,
+  longitude,
+  traffic_source AS user_traffic_source,
+  created_at AS user_created_at,
+  user_geom
+FROM
+  bigquery-public-data.thelook_ecommerce.users

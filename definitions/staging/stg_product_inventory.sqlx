@@ -1,0 +1,47 @@
+config {
+    type: "table",
+    description: "Combined product and inventory items"
+}
+
+WITH
+  products AS (
+  SELECT
+    id AS product_id,
+    name AS product_name,
+    category AS product_category,
+    brand AS product_brand,
+    department AS product_department,
+    sku,
+    retail_price
+  FROM
+    bigquery-public-data.thelook_ecommerce.products
+  WHERE
+    id IS NOT NULL ),
+  inventories AS (
+  SELECT
+    id AS inventory_item_id,
+    product_id,
+    cost,
+    product_sku,
+    product_distribution_center_id
+  FROM
+    bigquery-public-data.thelook_ecommerce.inventory_items
+  WHERE
+    id IS NOT NULL )
+SELECT
+  p.product_id,
+  p.product_name,
+  p.product_category,
+  p.product_brand,
+  p.product_department,
+  p.retail_price,
+  i.inventory_item_id,
+  i.cost AS item_cost,
+  i.product_sku,
+  i.product_distribution_center_id,
+FROM
+  products p
+LEFT JOIN
+  inventories i
+ON
+  p.product_id = i.product_id

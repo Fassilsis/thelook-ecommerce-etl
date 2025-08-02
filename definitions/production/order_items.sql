@@ -1,0 +1,72 @@
+config {
+  type: "table",
+  description: "Denormalized sales table at order item grain combining orders, order items, products, inventory, users, and distribution centers"
+}
+
+select
+  oi.order_item_id,
+  oi.order_id,
+  oi.user_id,
+
+  u.first_name,
+  u.last_name,
+  u.email,
+  u.age,
+  oi.gender,
+  u.state,
+  u.city,
+  u.country,
+  u.traffic_source,
+
+  o.order_status,
+  o.order_created_at,
+  o.order_shipped_at,
+  o.order_delivered_at,
+  o.order_returned_at,
+  o.num_of_item,
+  o.is_delivered,
+  o.is_returned,
+  o.is_in_transit,
+  o.order_year,
+  o.order_month,
+  o.order_day,
+  o.order_day_of_week,
+
+  oi.product_id,
+  oi.inventory_item_id,
+  oi.order_item_status,
+  oi.sale_price,
+
+  pi.product_name,
+  pi.product_category,
+  pi.product_brand,
+  pi.product_department,
+  pi.product_retail_price,
+  pi.cost as inventory_cost,
+  pi.product_sku,
+  pi.product_distribution_center_id,
+  pi.profit_margin,
+
+  dc.distribution_center_name,
+  dc.distribution_center_latitude,
+  dc.distribution_center_longitude
+
+from
+  ${ref("stg_order_items")} oi
+
+left join
+  ${ref("stg_orders")} o
+  on oi.order_id = o.order_id
+
+left join
+  ${ref("stg_users")} u
+  on oi.user_id = u.user_id
+
+left join
+  ${ref("stg_product_inventory")} pi
+  on oi.product_id = pi.product_id
+  and oi.inventory_item_id = pi.inventory_item_id
+
+left join
+  ${ref("stg_distribution_centers")} dc
+  on pi.product_distribution_center_id = dc.distribution_center_id

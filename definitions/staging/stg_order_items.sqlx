@@ -1,0 +1,48 @@
+config {
+    type: "table",
+    description: "Cleaned order items with standardized status"
+}
+
+SELECT
+  id AS order_item_id,
+  order_id,
+  user_id,
+  product_id,
+  inventory_item_id,
+  status,
+  created_at AS order_created_at,
+  shipped_at AS order_shipped_at,
+  delivered_at AS order_delivered_at,
+  returned_at AS order_returned_at,
+  CASE
+    WHEN delivered_at IS NOT NULL THEN TRUE
+    ELSE FALSE
+END
+  AS is_delivered,
+  CASE
+    WHEN returned_at IS NOT NULL THEN TRUE
+    ELSE FALSE
+END
+  AS is_returned,
+  CASE
+    WHEN shipped_at IS NOT NULL AND delivered_at IS NULL THEN TRUE
+    ELSE FALSE
+END
+  AS is_in_transit,
+  EXTRACT(year
+  FROM
+    created_at) AS order_year,
+  EXTRACT(month
+  FROM
+    created_at) AS order_month,
+  EXTRACT(day
+  FROM
+    created_at) AS order_date,
+  EXTRACT(dayofweek
+  FROM
+    created_at) AS order_day_of_week,
+  sale_price
+FROM
+  bigquery-public-data.thelook_ecommerce.order_items
+WHERE
+  id IS NOT NULL
