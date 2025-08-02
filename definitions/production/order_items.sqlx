@@ -75,4 +75,5 @@ SELECT
   sale_price AS revenue_after_discount,
   sale_price - item_cost AS profit_amount
  FROM base AS b
+ WHERE order_date <= CURRENT_DATE()
 
