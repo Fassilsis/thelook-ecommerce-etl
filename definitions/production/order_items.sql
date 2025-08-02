@@ -52,21 +52,21 @@ select
   dc.distribution_center_longitude
 
 from
-  ${ref("stg_order_items")} oi
+  ${ref("staging/stg_order_items")} oi
 
 left join
-  ${ref("stg_orders")} o
+  ${ref("staging/stg_orders")} o
   on oi.order_id = o.order_id
 
 left join
-  ${ref("stg_users")} u
+  ${ref("staging/stg_users")} u
   on oi.user_id = u.user_id
 
 left join
-  ${ref("stg_product_inventory")} pi
+  ${ref("staging/stg_product_inventory")} pi
   on oi.product_id = pi.product_id
   and oi.inventory_item_id = pi.inventory_item_id
 
 left join
-  ${ref("stg_distribution_centers")} dc
+  ${ref("staging/stg_distribution_centers")} dc
   on pi.product_distribution_center_id = dc.distribution_center_id
