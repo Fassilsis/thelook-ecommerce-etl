@@ -1,5 +1,5 @@
 defaultProject: e-commerce-analytics-348617
-defaultLocation: EU
+defaultLocation: US
 defaultDataset: dataform
 defaultAssertionDataset: dataform_assertions
 dataformCoreVersion: 3.0.0
