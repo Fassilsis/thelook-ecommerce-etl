@@ -5,6 +5,15 @@ config {
 
 SELECT
   order_id,
+  customer_id,
+  first_name,
+  last_name,
+  email,
+  age,
+  gender,
+  state,
+  city,
+  country,
   MAX(order_status) AS order_status,
   MAX(order_created_at) AS order_created_at,
   MAX(order_shipped_at) AS order_shipped_at,
@@ -34,5 +43,4 @@ SELECT
     ) AS in_transit_items
 FROM
   ${ref("order_items")}
-GROUP BY
-  1
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9

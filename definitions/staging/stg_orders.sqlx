@@ -12,17 +12,11 @@ SELECT
   order_id,
   user_id,
   status AS order_status,
-  -- Normalize gender: if starts with 'f' or 'F', then 'female', else 'male'
-  CASE
-    WHEN LOWER(gender) = 'f' THEN 'female'
-    ELSE 'male'
-END
-  AS gender,
   created_at AS order_created_at,
   shipped_at AS order_shipped_at,
   delivered_at AS order_delivered_at,
   returned_at AS order_returned_at,
-  num_of_item,
+  num_of_item
  
 FROM
   bigquery-public-data.thelook_ecommerce.orders

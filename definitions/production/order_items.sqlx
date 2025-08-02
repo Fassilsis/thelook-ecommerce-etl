@@ -6,7 +6,7 @@ WITH base AS (
   SELECT
     oi.order_item_id,
     oi.order_id,
-    oi.user_id,
+    oi.user_id AS customer_id,
     u.first_name,
     u.last_name,
     u.email,

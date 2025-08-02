@@ -1,0 +1,33 @@
+config {
+  type: "table",
+  description: "Cohort analysis: revenue and activity tracked by first order month"
+}
+
+WITH user_first_order AS (
+  SELECT
+    customer_id,
+    MIN(order_date) AS cohort_date
+  FROM ${ref("orders")}
+  GROUP BY customer_id
+),
+
+orders_with_cohort AS (
+  SELECT
+    o.*,
+    ufo.cohort_date,
+    DATE_DIFF(order_date, ufo.cohort_date, MONTH) AS months_since_cohort
+  FROM ${ref("orders")} o
+  JOIN user_first_order ufo
+    ON o.customer_id = ufo.customer_id
+)
+
+SELECT
+  cohort_date,
+  months_since_cohort,
+  COUNT(DISTINCT customer_id) AS customers,
+  COUNT(order_id) AS total_orders,
+  SUM(order_revenue) AS total_revenue,
+  SUM(returned_amount) AS total_returns
+FROM orders_with_cohort
+GROUP BY cohort_date, months_since_cohort
+ORDER BY cohort_date, months_since_cohort
