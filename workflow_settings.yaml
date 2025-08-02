@@ -1,5 +1,5 @@
 defaultProject: e-commerce-analytics-348617
 defaultLocation: US
-defaultDataset: dataform
-defaultAssertionDataset: dataform_assertions
+defaultDataset: thelook_etl
+defaultAssertionDataset: thelook_etl
 dataformCoreVersion: 3.0.0
