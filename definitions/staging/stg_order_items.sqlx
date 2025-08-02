@@ -10,6 +10,7 @@ SELECT
   product_id,
   inventory_item_id,
   status,
+  DATE(created_at) AS order_date,
   created_at AS order_created_at,
   shipped_at AS order_shipped_at,
   delivered_at AS order_delivered_at,
@@ -17,32 +18,21 @@ SELECT
   CASE
     WHEN delivered_at IS NOT NULL THEN TRUE
     ELSE FALSE
-END
-  AS is_delivered,
+  END AS is_delivered,
   CASE
     WHEN returned_at IS NOT NULL THEN TRUE
     ELSE FALSE
-END
-  AS is_returned,
+  END AS is_returned,
   CASE
     WHEN shipped_at IS NOT NULL AND delivered_at IS NULL THEN TRUE
     ELSE FALSE
-END
-  AS is_in_transit,
+  END AS is_in_transit,
   EXTRACT(year
   FROM
     created_at) AS order_year,
-  EXTRACT(month
-  FROM
-    created_at) AS order_month,
-  EXTRACT(day
-  FROM
-    created_at) AS order_date,
-  EXTRACT(dayofweek
-  FROM
-    created_at) AS order_day_of_week,
+  EXTRACT(month FROM created_at) AS order_month,
+  EXTRACT(day FROM created_at) AS order_day,
+  EXTRACT(dayofweek FROM created_at) AS order_day_of_week,
   sale_price
-FROM
-  bigquery-public-data.thelook_ecommerce.order_items
-WHERE
-  id IS NOT NULL
+FROM bigquery-public-data.thelook_ecommerce.order_items
+WHERE id IS NOT NULL

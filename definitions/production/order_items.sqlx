@@ -6,6 +6,7 @@ WITH base AS (
   SELECT
     oi.order_item_id,
     oi.order_id,
+    order_date,
     oi.user_id AS customer_id,
     u.first_name,
     u.last_name,
@@ -25,7 +26,7 @@ WITH base AS (
     oi.is_in_transit,
     oi.order_year,
     oi.order_month,
-    oi.order_date,
+    oi.order_day,
     oi.order_day_of_week,
     oi.product_id,
     oi.inventory_item_id,
