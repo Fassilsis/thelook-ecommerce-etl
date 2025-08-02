@@ -1,3 +1,8 @@
+config {
+  type: "table",
+  description: "Cohort analysis: revenue and activity tracked by first order month"
+}
+
 WITH user_first_order AS (
   SELECT
     customer_id,
