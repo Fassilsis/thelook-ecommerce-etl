@@ -1,5 +1,5 @@
 config {
-    type: "table",
+    type: "view",
     description: "Combined product and inventory items"
 }
 
