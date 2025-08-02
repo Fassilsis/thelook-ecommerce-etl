@@ -1,0 +1,38 @@
+config {
+    type: "table",
+    description: "Order-level aggregated table derived from order_items"
+}
+
+SELECT
+  order_id,
+  MAX(order_status) AS order_status,
+  MAX(order_created_at) AS order_created_at,
+  MAX(order_shipped_at) AS order_shipped_at,
+  MAX(order_delivered_at) AS order_delivered_at,
+  MAX(order_returned_at) AS order_returned_at,
+  MAX(order_year) AS order_year,
+  MAX(order_month) AS order_month,
+  MAX(order_date) AS order_date,
+  MAX(order_day_of_week) AS order_day_of_week,
+  MAX(num_of_item) AS num_of_item,
+  COUNT(*) AS item_count,
+  SUM(revenue_after_discount) AS order_revenue,
+  SUM(CASE
+      WHEN is_returned THEN revenue_after_discount
+      ELSE 0
+  END
+    ) AS returned_amount,
+  SUM(CASE
+      WHEN is_delivered THEN 1
+      ELSE 0
+  END
+    ) AS delivered_items,
+  SUM(CASE
+      WHEN is_in_transit THEN 1
+      ELSE 0
+  END
+    ) AS in_transit_items
+FROM
+  ${ref("order_items")}
+GROUP BY
+  1
